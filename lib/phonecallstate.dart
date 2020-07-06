@@ -3,13 +3,15 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-
-
-typedef void ErrorHandler(String message);
+typedef ErrorHandler = void Function(String message);
 
 class Phonecallstate {
+  Phonecallstate() {
+    _channel.setMethodCallHandler(platformCallHandler);
+  }
+
   static const MethodChannel _channel =
-      const MethodChannel('com.plusdt.phonecallstate');
+      MethodChannel('com.plusdt.phonecallstate');
 
   VoidCallback incomingHandler;
   VoidCallback dialingHandler;
@@ -17,22 +19,21 @@ class Phonecallstate {
   VoidCallback disconnectedHandler;
   ErrorHandler errorHandler;
 
-
-  Phonecallstate(){
-    _channel.setMethodCallHandler(platformCallHandler);
-  }
-
-  Future<dynamic> setTestMode(double seconds) => _channel.invokeMethod('phoneTest.PhoneIncoming', seconds);
+  Future<dynamic> setTestMode(double seconds) =>
+      _channel.invokeMethod<dynamic>('phoneTest.PhoneIncoming', seconds);
 
   void setIncomingHandler(VoidCallback callback) {
     incomingHandler = callback;
   }
+
   void setDialingHandler(VoidCallback callback) {
     dialingHandler = callback;
   }
+
   void setConnectedHandler(VoidCallback callback) {
     connectedHandler = callback;
   }
+
   void setDisconnectedHandler(VoidCallback callback) {
     disconnectedHandler = callback;
   }
@@ -41,35 +42,34 @@ class Phonecallstate {
     errorHandler = handler;
   }
 
-
-  Future platformCallHandler(MethodCall call) async {
-    print("_platformCallHandler call ${call.method} ${call.arguments}");
+  Future<void> platformCallHandler(MethodCall call) async {
+    print('_platformCallHandler call ${call.method} ${call.arguments}');
     switch (call.method) {
-      case "phone.incoming":
+      case 'phone.incoming':
         //print("incoming");
         if (incomingHandler != null) {
           incomingHandler();
         }
         break;
-      case "phone.dialing":
+      case 'phone.dialing':
         //print("dialing");
         if (dialingHandler != null) {
           dialingHandler();
         }
         break;
-      case "phone.connected":
+      case 'phone.connected':
         //print("connected");
         if (connectedHandler != null) {
           connectedHandler();
         }
         break;
-      case "phone.disconnected":
+      case 'phone.disconnected':
         //print("disconnected");
         if (disconnectedHandler != null) {
           disconnectedHandler();
         }
         break;
-      case "phone.onError":
+      case 'phone.onError':
         if (errorHandler != null) {
           errorHandler(call.arguments);
         }
