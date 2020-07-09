@@ -7,7 +7,7 @@ import CallKit
 public class SwiftPhonecallstatePlugin: NSObject, FlutterPlugin, CXCallObserverDelegate {
 
     var callObserver: CXCallObserver!
-    var _channel: FlutterMethodChannel
+    var _channel: FlutterMethodChannel = FlutterMethodChannel()
 
     var testTimer: Timer?
     var counter = 0
@@ -23,8 +23,8 @@ public class SwiftPhonecallstatePlugin: NSObject, FlutterPlugin, CXCallObserverD
 
     init(channel:FlutterMethodChannel){
         super.init()
-        _channel = channel
 
+        _channel = channel
         setupCallObserver()
     }
 
